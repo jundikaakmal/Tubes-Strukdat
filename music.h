@@ -12,27 +12,29 @@ struct Lagu {
     int tahun;
 };
 
-/* ===== SLL - LIBRARY ===== */
-typedef struct elmlibrary* addressLibrary;
-
-struct elmlibrary {
+/* ========== LIBRARY (DLL) ========== */
+typedef struct elmLib *adrLibrary;
+struct elmLib {
     Lagu info;
-    addressLibrary next;
+    adrLibrary next;
+    adrLibrary prev;
 };
 
-struct ListLibrary {
-    addressLibrary first;
+struct listLibrary {
+    adrLibrary first;
+    adrLibrary last;
 };
 
-void createListLibrary(ListLibrary &L);
-addressLibrary allocateLibrary(Lagu x);
-void insertFirstLibrary(ListLibrary &L, addressLibrary p);
-void deleteLibrary(ListLibrary &L, addressLibrary p);
-void printLibrary(ListLibrary L);
-addressLibrary searchLibrary(ListLibrary L, int id);
-addressLibrary searchLibraryByJudul(ListLibrary L, string judul);
-void updateLibrary(ListLibrary &L, addressLibrary p);
-addressLibrary findSimilarSong(ListLibrary L, addressLibrary current); // cari mirip
+void createListLibrary(listLibrary &L);
+bool isEmptyLibrary(listLibrary L);
+adrLibrary allocateLibrary(Lagu x);
+void insertLastLibrary(listLibrary &L, adrLibrary p);
+void deleteLibrary(listLibrary &L, adrLibrary p);
+void printLibrary(listLibrary L);
+adrLibrary searchLibrary(listLibrary L, int id);
+adrLibrary searchLibraryByJudul(listLibrary L, string judul);
+void updateLibrary(listLibrary &L, adrLibrary p);
+adrLibrary findSimilarSong(listLibrary L, adrLibrary current);
 
 /* ===== SLL - PLAYLIST (simpan reference ke addressLibrary) ===== */
 typedef struct elmplaylist* addressPlaylist;
@@ -63,5 +65,11 @@ void laguDummy(listLibrary &Library);
 void menuAdmin(listLibrary &Library, listPlaylist &Playlist);
 void menuUser(listLibrary &Library, listPlaylist &Playlist);
 
+/* ========== FILTER & COUNT ========== */
+void filterByGenre(listLibrary L, string genre);
+void filterByArtis(listLibrary L, string artis);
+int countLibrary(listLibrary L);
+
 #endif
+
 
