@@ -54,8 +54,14 @@ void deletePlaylistByLibrary(ListPlaylist &L, addressLibrary p);
 void printPlaylist(ListPlaylist L);
 addressPlaylist searchPlaylistNodeByLibrary(ListPlaylist &L, addressLibrary p); // cari node playlist
 
-/* ===== PLAYER ===== */
-void playLagu(addressLibrary p, bool &status, addressLibrary &current);
-void stopLagu(bool &status);
+/* ===== TAMBAHAN ===== */
+void playLagu(adrLibrary p, bool &isPlay, adrLibrary &current);
+void stopLagu(bool &isPlay);
+bool loginAdmin();
+bool loginUser();
+void laguDummy(listLibrary &Library);
+void menuAdmin(listLibrary &Library, listPlaylist &Playlist);
+void menuUser(listLibrary &Library, listPlaylist &Playlist);
 
 #endif
+
