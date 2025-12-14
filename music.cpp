@@ -2,112 +2,136 @@
 
 /* ================= LIBRARY ================= */
 
-void createListLibrary(ListLibrary &L) {
+void createListLibrary(listLibrary &L) {
     L.first = nullptr;
+    L.last = nullptr;
 }
 
-addressLibrary allocateLibrary(Lagu x) {
-    addressLibrary p = new elmlibrary;
+bool isEmptyLibrary(listLibrary L) {
+    return (L.first == nullptr);
+}
+
+adrLibrary allocateLibrary(Lagu x) {
+    adrLibrary p = new elmLib;
     p->info = x;
     p->next = nullptr;
+    p->prev = nullptr;
     return p;
 }
 
-void insertFirstLibrary(ListLibrary &L, addressLibrary p) {
-    p->next = L.first;
-    L.first = p;
-}
+void insertLastLibrary(listLibrary &L, adrLibrary p) {
+    bool idC = false;
+    adrLibrary q = L.first;
 
-void deleteLibrary(ListLibrary &L, addressLibrary p) {
-    if (L.first == nullptr || p == nullptr) return;
+    while (q != nullptr && idC == false) {
+        if (q->info.id == p->info.id) {
+            idC = true;
+        }
+        q = q->next;
+    }
 
-    if (L.first == p) {
-        L.first = p->next;
-        delete p;
+    if (idC == true) {
+        cout << "\nID telah digunakan, tidak bisa menambahkan lagu" << endl;
     } else {
-        addressLibrary q = L.first;
-        while (q != nullptr && q->next != p) {
-            q = q->next;
+        if (isEmptyLibrary(L)) {
+            L.first = p;
+            L.last = p;
+        } else {
+            p->prev = L.last;
+            L.last->next = p;
+            L.last = p;
         }
-        if (q != nullptr && q->next == p) {
-            q->next = p->next;
-            delete p;
-        }
+        cout << "\nLagu sudah ditambahkan" << endl;
     }
 }
 
-void printLibrary(ListLibrary L) {
-    addressLibrary p = L.first;
+void deleteLibrary(listLibrary &L, adrLibrary p) {
+    if (isEmptyLibrary(L)) {
+        return;
+    }
+
+    if (L.first == p && L.last == p) {
+        L.first = nullptr;
+        L.last = nullptr;
+    } else if (L.first == p) {
+        L.first = p->next;
+        L.first->prev = nullptr;
+    } else if (L.last == p) {
+        L.last = p->prev;
+        L.last->next = nullptr;
+    } else {
+        p->prev->next = p->next;
+        p->next->prev = p->prev;
+    }
+    delete p;
+}
+
+void printLibrary(listLibrary L) {
+    adrLibrary p = L.first;
+
+    cout << "\n=======================================" << endl;
+    cout << " ID | JUDUL LAGU | ARTIS | GENRE | TAHUN " << endl;
+    cout << "=========================================" << endl;
+
     while (p != nullptr) {
-        cout << p->info.id << " | "
+        cout << p->info.id << "  | "
              << p->info.judul << " | "
              << p->info.artis << " | "
              << p->info.genre << " | "
              << p->info.tahun << endl;
         p = p->next;
     }
+    cout << endl;
 }
 
-addressLibrary searchLibrary(ListLibrary L, int id) {
-    addressLibrary p = L.first;
-    while (p != nullptr && p->info.id != id) {
-        p = p->next;
+adrLibrary searchLibrary(listLibrary L, int id) {
+    adrLibrary p = L.first;
+    bool found = false;
+
+    while (p != nullptr && found == false) {
+        if (p->info.id == id) {
+            found = true;
+        } else {
+            p = p->next;
+        }
     }
     return p;
 }
 
-addressLibrary searchLibraryByJudul(ListLibrary L, string judul) {
-    addressLibrary p = L.first;
-    while (p != nullptr && p->info.judul != judul) {
-        p = p->next;
+adrLibrary searchLibraryByJudul(listLibrary L, string judul) {
+    adrLibrary p = L.first;
+    bool found = false;
+
+    while (p != nullptr && found == false) {
+        if (p->info.judul == judul) {
+            found = true;
+        } else {
+            p = p->next;
+        }
     }
     return p;
 }
 
-void updateLibrary(ListLibrary &L, addressLibrary p) {
-    if (p != nullptr) {
-        cout << "Judul Baru : "; cin >> p->info.judul;
-        cout << "Artis Baru : "; cin >> p->info.artis;
-        cout << "Genre Baru : "; cin >> p->info.genre;
-        cout << "Tahun Baru : "; cin >> p->info.tahun;
-        // Karena playlist menyimpan pointer ke node library, tidak perlu sinkron tambahan:
-        // update otomatis terlihat pada playlist karena referensi sama.
-    }
+void updateLibrary(listLibrary &L, adrLibrary p) {
+    cout << "Judul baru: ";
+    cin >> p->info.judul;
+    cout << "Artis baru: ";
+    cin >> p->info.artis;
+    cout << "Genre baru: ";
+    cin >> p->info.genre;
+    cout << "Tahun baru: ";
+    cin >> p->info.tahun;
 }
 
-/* Cari lagu "mirip" saat tidak di playlist:
-   kebijakan sederhana: cari artis sama (prioritas), kalau tidak ada cari genre sama,
-   jika tetap tidak ada -> return nullptr (caller akan tangani).
-*/
-addressLibrary findSimilarSong(ListLibrary L, addressLibrary current) {
-    if (current == nullptr) return nullptr;
+adrLibrary findSimilarSong(listLibrary L, adrLibrary current) {
+    adrLibrary p = L.first;
 
-    // cari artis sama selain current
-    addressLibrary p = L.first;
     while (p != nullptr) {
-        if (p != current && p->info.artis == current->info.artis) {
+        if (p->info.genre == current->info.genre && p != current) {
             return p;
         }
         p = p->next;
     }
-
-    // cari genre sama selain current
-    p = L.first;
-    while (p != nullptr) {
-        if (p != current && p->info.genre == current->info.genre) {
-            return p;
-        }
-        p = p->next;
-    }
-
-    // fallback: cari lagu lain selain current (deterministik: first different)
-    p = L.first;
-    while (p != nullptr) {
-        if (p != current) return p;
-        p = p->next;
-    }
-
-    // tidak ada lagu lain
     return nullptr;
 }
 
@@ -562,3 +586,59 @@ void menuUser(listLibrary &Library, listPlaylist &Playlist) {
 
     }
 }
+
+void filterByGenre(listLibrary L, string genre) {
+    adrLibrary p = L.first;
+    bool found = false;
+
+    cout << "\n=== Lagu dengan Genre: " << genre << " ===\n";
+
+    while (p != nullptr) {
+        if (p->info.genre == genre) {
+            cout << p->info.id << " | "
+                 << p->info.judul << " | "
+                 << p->info.artis << " | "
+                 << p->info.tahun << endl;
+            found = true;
+        }
+        p = p->next;
+    }
+
+    if (!found) {
+        cout << "Tidak ada lagu dengan genre tersebut\n";
+    }
+}
+
+void filterByArtis(listLibrary L, string artis) {
+    adrLibrary p = L.first;
+    bool found = false;
+
+    cout << "\n=== Lagu oleh Artis: " << artis << " ===\n";
+
+    while (p != nullptr) {
+        if (p->info.artis == artis) {
+            cout << p->info.id << " | "
+                 << p->info.judul << " | "
+                 << p->info.genre << " | "
+                 << p->info.tahun << endl;
+            found = true;
+        }
+        p = p->next;
+    }
+
+    if (!found) {
+        cout << "Tidak ada lagu dari artis tersebut\n";
+    }
+}
+
+int countLibrary(listLibrary L) {
+    int count = 0;
+    adrLibrary p = L.first;
+
+    while (p != nullptr) {
+        count++;
+        p = p->next;
+    }
+    return count;
+}
+
