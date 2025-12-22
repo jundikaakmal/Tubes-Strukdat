@@ -1,6 +1,6 @@
 # Penerapan Struktur Data Untuk Aplikasi Pemutar Musik
 
-## Deskirpsi
+## Deskripsi
 Proses perancangan dan pembuatan aplikasi pemutar musik sederhana yang dikembangkan untuk tugas besar mata kuliah struktur data. Aplikasi ini dibuat agar bisa digunakan oleh dua peran, yaitu admin dan user, dengan hak akses yang berbeda. Dalam pengembangannya, aplikasi memanfaatkan struktur data Singly Linked List (SLL) dan Doubly Linked List (DLL) untuk menyimpan serta mengelola data lagu
 
 ## Struktur Data
