@@ -1,9 +1,11 @@
 #ifndef MUSIC_H_INCLUDED
 #define MUSIC_H_INCLUDED
-
 #include <iostream>
+#include <string>
+
 using namespace std;
 
+/* ===== DATA LAGU ===== */
 struct Lagu {
     int id;
     string judul;
@@ -12,8 +14,9 @@ struct Lagu {
     int tahun;
 };
 
-/* ========== LIBRARY (DLL) ========== */
-typedef struct elmLib *adrLibrary;
+/* ===== LIBRARY (DOUBLE LINKED LIST) ===== */
+typedef struct elmLib* adrLibrary;
+
 struct elmLib {
     Lagu info;
     adrLibrary next;
@@ -25,6 +28,7 @@ struct listLibrary {
     adrLibrary last;
 };
 
+/* fungsi library */
 void createListLibrary(listLibrary &L);
 bool isEmptyLibrary(listLibrary L);
 adrLibrary allocateLibrary(Lagu x);
@@ -35,41 +39,44 @@ adrLibrary searchLibrary(listLibrary L, int id);
 adrLibrary searchLibraryByJudul(listLibrary L, string judul);
 void updateLibrary(listLibrary &L, adrLibrary p);
 adrLibrary findSimilarSong(listLibrary L, adrLibrary current);
+int countLibrary(listLibrary L);
+void filterByGenre(listLibrary L, string genre);
+void filterByArtis(listLibrary L, string artis);
 
-/* ===== SLL - PLAYLIST (simpan reference ke addressLibrary) ===== */
+/* ===== PLAYLIST (SINGLE LINKED LIST) ===== */
 typedef struct elmplaylist* addressPlaylist;
 
 struct elmplaylist {
-    addressLibrary info;    // pointer ke node library
+    adrLibrary info;      // refer ke lagu di library
     addressPlaylist next;
 };
 
-struct ListPlaylist {
+struct listPlaylist {
     addressPlaylist first;
 };
 
-void createListPlaylist(ListPlaylist &L);
-addressPlaylist allocatePlaylist(addressLibrary p);
-void insertLastPlaylist(ListPlaylist &L, addressPlaylist p);
-bool deletePlaylistByID(ListPlaylist &L, int id); // return true jika dihapus
-void deletePlaylistByLibrary(ListPlaylist &L, addressLibrary p);
-void printPlaylist(ListPlaylist L);
-addressPlaylist searchPlaylistNodeByLibrary(ListPlaylist &L, addressLibrary p); // cari node playlist
+/* fungsi playlist */
+void createListPlaylist(listPlaylist &L);
+addressPlaylist allocatePlaylist(adrLibrary p);
+void insertLastPlaylist(listPlaylist &L, addressPlaylist p);
+bool deletePlaylistByID(listPlaylist &L, int id);
+void deletePlaylistByLibrary(listPlaylist &L, adrLibrary p);
+addressPlaylist searchPlaylistNodeByLibrary(listPlaylist &L, adrLibrary p);
+void printPlaylist(listPlaylist L);
+bool isEmptyPlaylist(listPlaylist L);
 
-/* ===== TAMBAHAN ===== */
-void playLagu(adrLibrary p, bool &isPlay, adrLibrary &current);
-void stopLagu(bool &isPlay);
+/* ===== PLAYER ===== */
+void playLagu(adrLibrary p, bool &status, adrLibrary &current);
+void stopLagu(bool &status);
+
+/* ===== LOGIN & MENU ===== */
 bool loginAdmin();
 bool loginUser();
 void laguDummy(listLibrary &Library);
 void menuAdmin(listLibrary &Library, listPlaylist &Playlist);
 void menuUser(listLibrary &Library, listPlaylist &Playlist);
 
-/* ========== FILTER & COUNT ========== */
-void filterByGenre(listLibrary L, string genre);
-void filterByArtis(listLibrary L, string artis);
-int countLibrary(listLibrary L);
-
 #endif
+
 
 
