@@ -17,7 +17,7 @@ struct Lagu {
 /* ===== LIBRARY (DOUBLE LINKED LIST) ===== */
 typedef struct elmLib* adrLibrary;
 
-struct elmLib {
+struct elmLibrary {
     Lagu info;
     adrLibrary next;
     adrLibrary prev;
@@ -77,6 +77,7 @@ void menuAdmin(listLibrary &Library, listPlaylist &Playlist);
 void menuUser(listLibrary &Library, listPlaylist &Playlist);
 
 #endif
+
 
 
 
