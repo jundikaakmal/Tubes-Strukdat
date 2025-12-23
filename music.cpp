@@ -516,7 +516,13 @@ void menuUser(listLibrary &Library, listPlaylist &Playlist) {
         }
         system("cls");
         if (menuUser == 4) { // NEXT
-            if (inPlaylist && currentPlayNode != nullptr) {
+            // Saat sedang demo terdapat sedikit kesalahan yang menyebabkan lagu tetap bisa di next padahal sedang tidak 
+            // memutar lagu, itu disebabkan karna belum melakukan pengecekan function isPlay terlebih dahulu jadi lagu masih
+            // bisa di next ketika sedang tidak memutar lagu. Jadi kami menambahkan sedikit perbaikan yaitu pengecekan 
+            // function isPlay terlebih dahulu
+            if (!isPlay) {
+                cout << "Tidak ada lagu yang sedang diputar\n"; 
+            } else if (inPlaylist && currentPlayNode != nullptr) {
                 if (currentPlayNode->next != nullptr) {
                     currentPlayNode = currentPlayNode->next;
                     playLagu(currentPlayNode->info, isPlay, current);
@@ -681,6 +687,7 @@ int countLibrary(listLibrary L) {
     }
     return count;
 }
+
 
 
 
