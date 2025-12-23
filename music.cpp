@@ -276,22 +276,18 @@ adrPlaylist searchPlaylistByLibrary(listPlaylist L, adrLibrary p) {
 
 /* ================= PLAYER ================= */
 
-void playLagu(addressLibrary p, bool &status, addressLibrary &current) {
-    if (p != nullptr) {
-        current = p;
-        status = true;
-        cout << "Memutar: " << p->info.judul << endl;
-    }
+void playLagu(adrLibrary p, bool &isPlay, adrLibrary &current) {
+    isPlay = true;
+    current = p;
+
+    cout << "\nSedang memutar...\n";
+    cout << "Judul: " << p->info.judul << endl;
+    cout << "Artis: " << p->info.artis << endl;
 }
 
-void stopLagu(bool &status) {
-    if (status) {
-        status = false;
-        cout << "Lagu dihentikan" << endl;
-    } else {
-        cout << "Tidak ada lagu yang sedang diputar" << endl;
-    }
-}
+void stopLagu(bool &isPlay) {
+    isPlay = false;
+    cout << "Lagu dihentikan" << endl;
 
 bool loginAdmin() {
     string u, p;
@@ -684,5 +680,6 @@ int countLibrary(listLibrary L) {
     }
     return count;
 }
+
 
 
