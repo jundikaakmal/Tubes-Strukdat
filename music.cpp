@@ -288,6 +288,7 @@ void playLagu(adrLibrary p, bool &isPlay, adrLibrary &current) {
 void stopLagu(bool &isPlay) {
     isPlay = false;
     cout << "Lagu dihentikan" << endl;
+} 
 
 bool loginAdmin() {
     string u, p;
@@ -680,6 +681,7 @@ int countLibrary(listLibrary L) {
     }
     return count;
 }
+
 
 
 
