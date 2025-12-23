@@ -137,98 +137,141 @@ adrLibrary findSimilarSong(listLibrary L, adrLibrary current) {
 
 /* ================= PLAYLIST ================= */
 
-void createListPlaylist(ListPlaylist &L) {
+void createListPlaylist(listPlaylist &L) {
     L.first = nullptr;
+    L.last = nullptr;
 }
 
-addressPlaylist allocatePlaylist(addressLibrary p) {
-    addressPlaylist q = new elmplaylist;
+bool isEmptyPlaylist(listPlaylist L) {
+    return (L.first == nullptr);
+}
+
+adrPlaylist allocatePlaylist(adrLibrary p) {
+    adrPlaylist q = new elmPlay;
     q->info = p;
     q->next = nullptr;
+    q->prev = nullptr;
     return q;
 }
 
-void insertLastPlaylist(ListPlaylist &L, addressPlaylist p) {
-    if (L.first == nullptr) {
-        L.first = p;
-    } else {
-        addressPlaylist q = L.first;
-        while (q->next != nullptr) q = q->next;
-        q->next = p;
-    }
-}
+bool isPlaylistContain(listPlaylist L, adrLibrary pLib) {
+    adrPlaylist q = L.first;
+    bool found = false;
 
-// Hapus node playlist berdasarkan id lagu. Kembalikan true jika berhasil.
-bool deletePlaylistByID(ListPlaylist &L, int id) {
-    if (L.first == nullptr) return false;
-
-    // jika node pertama
-    if (L.first->info != nullptr && L.first->info->info.id == id) {
-        addressPlaylist temp = L.first;
-        L.first = L.first->next;
-        delete temp;
-        return true;
-    }
-
-    addressPlaylist q = L.first;
-    while (q->next != nullptr && q->next->info != nullptr && q->next->info->info.id != id) {
-        q = q->next;
-    }
-
-    if (q->next != nullptr && q->next->info != nullptr && q->next->info->info.id == id) {
-        addressPlaylist temp = q->next;
-        q->next = temp->next;
-        delete temp;
-        return true;
-    }
-
-    return false;
-}
-
-// Hapus semua node playlist yang merujuk ke node library p
-void deletePlaylistByLibrary(ListPlaylist &L, addressLibrary p) {
-    addressPlaylist q = L.first;
-    addressPlaylist prev = nullptr;
-    while (q != nullptr) {
-        if (q->info == p) {
-            addressPlaylist temp = q;
-            if (prev == nullptr) {
-                L.first = q->next;
-                q = L.first;
-            } else {
-                prev->next = q->next;
-                q = prev->next;
-            }
-            delete temp;
+    while (q != nullptr && found == false) {
+        if (q->info->info.id == pLib->info.id) {
+            found = true;
         } else {
-            prev = q;
             q = q->next;
         }
     }
+    return found;
 }
 
-void printPlaylist(ListPlaylist L) {
-    addressPlaylist q = L.first;
-    while (q != nullptr) {
-        if (q->info != nullptr) {
-            cout << q->info->info.id << " | "
-                 << q->info->info.judul << " | "
-                 << q->info->info.artis << " | "
-                 << q->info->info.genre << " | "
-                 << q->info->info.tahun << endl;
+void insertLastPlaylist(listPlaylist &L, adrPlaylist p) {
+    if (isPlaylistContain(L, p->info)) {
+        cout << "ID telah digunakan di playlist, tidak bisa menambahkan lagu" << endl;
+    } else {
+        if (isEmptyPlaylist(L)) {
+            L.first = p;
+            L.last = p;
+        } else {
+            p->prev = L.last;
+            L.last->next = p;
+            L.last = p;
         }
-        q = q->next;
+        cout << "Lagu sudah ditambahkan" << endl;
     }
 }
 
-// Cari node playlist yang merujuk ke addressLibrary p
-addressPlaylist searchPlaylistNodeByLibrary(ListPlaylist &L, addressLibrary p) {
-    addressPlaylist q = L.first;
-    while (q != nullptr) {
-        if (q->info == p) return q;
-        q = q->next;
+bool deletePlaylistByID(listPlaylist &L, int id) {
+    adrPlaylist q = L.first;
+    bool found = false;
+
+    while (q != nullptr && found == false) {
+        if (q->info->info.id == id) {
+            found = true;
+        } else {
+            q = q->next;
+        }
     }
-    return nullptr;
+
+    if (found == false) return false;
+
+    if (L.first == q && L.last == q) {
+        L.first = nullptr;
+        L.last = nullptr;
+    } else if (L.first == q) {
+        L.first = q->next;
+        L.first->prev = nullptr;
+    } else if (L.last == q) {
+        L.last = q->prev;
+        L.last->next = nullptr;
+    } else {
+        q->prev->next = q->next;
+        q->next->prev = q->prev;
+    }
+
+    delete q;
+    return true;
+}
+
+void deletePlaylistByLibrary(listPlaylist &L, adrLibrary pLib) {
+    adrPlaylist q = L.first;
+    bool found = false;
+
+    while (q != nullptr && found == false) {
+        if (q->info == pLib) {
+            found = true;
+        } else {
+            q = q->next;
+        }
+    }
+
+    if (found == true) {
+        if (L.first == q && L.last == q) {
+            L.first = nullptr;
+            L.last = nullptr;
+        } else if (L.first == q) {
+            L.first = q->next;
+            L.first->prev = nullptr;
+        } else if (L.last == q) {
+            L.last = q->prev;
+            L.last->next = nullptr;
+        } else {
+            q->prev->next = q->next;
+            q->next->prev = q->prev;
+        }
+        delete q;
+    }
+}
+
+void printPlaylist(listPlaylist L) {
+    adrPlaylist p = L.first;
+
+    while (p != nullptr) {
+        cout << "\nID: " << p->info->info.id << endl;
+        cout << "Judul: " << p->info->info.judul << endl;
+        cout << "Artis: " << p->info->info.artis << endl;
+        cout << "Genre: " << p->info->info.genre << endl;
+        cout << "Tahun: " << p->info->info.tahun << endl;
+
+        p = p->next;
+    }
+}
+
+adrPlaylist searchPlaylistByLibrary(listPlaylist L, adrLibrary p) {
+    adrPlaylist q = L.first;
+    bool found = false;
+
+    while (q != nullptr && found == false) {
+        if (q->info == p) {
+            found = true;
+        } else {
+            q = q->next;
+        }
+    }
+    return q;
 }
 
 /* ================= PLAYER ================= */
@@ -641,4 +684,5 @@ int countLibrary(listLibrary L) {
     }
     return count;
 }
+
 
